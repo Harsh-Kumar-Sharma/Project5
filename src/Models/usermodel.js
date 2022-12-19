@@ -11,12 +11,12 @@ const userSchema= new mongoose.Schema({
     shipping: {
       street: {type:String, required:true},
       city: {type:String, required:true},
-      pincode: {type:Number, mandatory}
+      pincode: {type:Number,required:true}
     },
     billing: {
-      street: {type:String, mandatory},
-      city: {type:String, mandatory},
-      pincode: {number, mandatory}
+      street: {type:String,required:true},
+      city: {type:String,required:true},
+      pincode: {type:Number,required:true}
     }
   }
 },{timetamps:true});

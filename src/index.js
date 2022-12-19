@@ -5,9 +5,10 @@ const route = require('./routes/route');
 const multer= require('multer')
 
 app.use(express.json())
-app.use(urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }));
 app.use(multer().any())
 
+mongoose.set('strictQuery', true);
 mongoose.connect("mongodb+srv://Avverma:Avverma95766@avverma.2g4orpk.mongodb.net/group10Database",{
     useNewUrlParser: true
 })
