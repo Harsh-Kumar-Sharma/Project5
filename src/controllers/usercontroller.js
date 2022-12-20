@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt")
 const validator = require('../validators/validator')
 const aws =require('./aws')
 
-
+/*-------------------------user create api ---------------------------------*/
 const createUser = async function ( req,res){
     try{
         let data = req.body
@@ -78,6 +78,7 @@ catch (error) {
 }
 }
 
+/*-------------------------user login api ---------------------------------*/
 const userLogin = async function (req, res) {
 
     try {
@@ -125,7 +126,7 @@ const userLogin = async function (req, res) {
     }
 }
 
-
+/*-------------------------user Get api ---------------------------------*/
 const userget = async (req,res)=>{
     try{
    const userid=req.params.userId
@@ -144,6 +145,10 @@ const userget = async (req,res)=>{
         return res.status(500).send({status:false,message:err.message})
     }
 }
+
+
+/*-------------------------user Update api---------------------------------*/
+
 const updateUser = async function (req, res) {
     try {
       let userId = req.params.userId
