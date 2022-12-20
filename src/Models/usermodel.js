@@ -19,6 +19,6 @@ const userSchema= new mongoose.Schema({
       pincode: {type:Number,required:true}
     }
   }
-},{timetamps:true});
+},{timestamps:true});
 
 module.exports= mongoose.model('user',userSchema)
