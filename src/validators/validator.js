@@ -12,15 +12,18 @@ const validEmail = function (email){
 }
 
 const validPhone = function (phone){
-    return /^\+?([9]{1})\)?([1]{1})\)?([6-9]{1})\)?[-. ]?([0-9]{9})$/.test(phone);
+    return /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(phone);
 }
-
 const isValidObjectId = function (objectId){
     return mongoose.Types.ObjectId.isValid(objectId)
 }
 const validPincode = function(pincode){
     if ( /^\+?([1-9]{1})\)?([0-9]{5})$/.test(pincode)) return true
 }
+const regexPassword = function (password) {
+    return (/^(?=.*[A-Z0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,15}$/)
+        .test(password)
+}
 
 
-module.export={valid,validEmail,validPhone,isValidObjectId,validPincode}
+module.exports={valid,validEmail,validPhone,isValidObjectId,validPincode,regexPassword}

@@ -1,52 +1,9 @@
 const usermodel = require('../Models/usermodel') 
 const { isValidObjectId } = require('mongoose');
+const validator = require('../validators/validator')
+const aws =require('./aws')
 
-const userLogin = async function (req, res) {
 
-    try {
-
-        let data = req.body
-
-        let { email, password } = data
-
-        if (!email) return res.status(400).send({ status: false, message: "EmailId required to login" })
-        if (!validator.isValidEmail(email)) { return res.status(400).send({ status: false, message: "Invalid EmailID Format or Please input all letters in lowercase." }) }
-
-    if(!password) return res.status(400).send({ status: false, message: "Password required to login" })
-        if (!validator.isValidpassword(password)) { return res.status(400).send({ status: false, message: "Invalid Password Format! Password Should be 8 to 15 Characters and have a mixture of uppercase and lowercase letters and contain one symbol and then at least one Number." }) }
-
-        const userData = await userModel.findOne({ email: email })
-        if (!userData) { return res.status(401).send({ status: false, message: "Invalid Login Credentials! You need to register first." }) }
-
-        let checkPassword = await bcrypt.compare(password, userData.password)
-
-        if (checkPassword) {
-
-            let payload = {
-                userId: userData['_id'].toString(),
-                Batch: 'Plutonium',
-                Project: "Products Management",
-                iat: Date.now(),
-                exp: Date.now()
-            }
-
-            const token = JWT.sign({ payload }, "we-are-from-group10", { expiresIn: 60 * 60 });
-
-    
-            let obj = { userId: userData['_id'], token: token }
-
-            return res.status(200).send({ status: true, message: 'User login successfull', data: obj })
-
-        } else {
-
-            return res.status(401).send({ status: false, message: 'Wrong Password' })
-        }
-
-    } catch (error) {
-
-        return res.status(500).send({ status: false, error: error.message })
-    }
-}
 
 const createUser = async function ( req,res){
     try{
@@ -61,19 +18,19 @@ const createUser = async function ( req,res){
 
     if (!(validator.valid(data.email))) { return res.status(400).send({ status: false, message: "Email is required" }) }
 
-    if (!(validator.isRightFormatemail(data.email))) { return res.status(400).send({ status: false, message: "Please provide a valid email" }) }
+    if (!(validator.validEmail(data.email))) { return res.status(400).send({ status: false, message: "Please provide a valid email" }) }
 
-    let isUniqueEMAIL = await userModel.findOne({ email: data.email })
+    let isUniqueEMAIL = await usermodel.findOne({ email: data.email })
     if (isUniqueEMAIL) { return res.status(400).send({ status: false, message: `User already exist with this ${data.email}. Login instead ?` }) }
 
     if (!(validator.valid(data.phone))) { return res.status(400).send({ status: false, message: "Phone number is required" }) }
 
-    if (!(validator.isRightFormatmobile(data.phone))) { return res.status(400).send({ status: false, message: "Please provide a valid Indian phone number with country code (+91..)" }) }
+    if (!(validator.validPhone(data.phone))) { return res.status(400).send({ status: false, message: "Please provide a valid Indian phone number with country code (+91..)" }) }
 
-    let isUniquePhone = await userModel.findOne({ phone: data.phone })
+    let isUniquePhone = await usermodel.findOne({ phone: data.phone })
     if (isUniquePhone) { return res.status(400).send({ status: false, message: `User already exist with this ${data.phone}.` }) }
 
-    if (!(validator.valid(data.password))) { return res.status(400).send({ status: false, message: "Password is required" }) }
+    if (!(validator.regexPassword(data.password))) { return res.status(400).send({ status: false, message: "Password is required" }) }
 
     if (data.password.trim().length < 8 || data.password.trim().length > 15) { return res.status(400).send({ status: false, message: 'Password should be of minimum 8 characters & maximum 15 characters' }) }
 
@@ -109,7 +66,7 @@ const createUser = async function ( req,res){
 
     data.address = address;
 
-    const newUser = await userModel.create(data);
+    const newUser = await usermodel.create(data);
 
     return res.status(201).send({ status: true, message: 'success', data: newUser })
 
@@ -117,16 +74,63 @@ const createUser = async function ( req,res){
 }
 catch (error) {
     console.log(error)
-    return res.status(500).send({ message: error.message })
+    return res.status(500).send({status:false,message: error.message })
 }
 }
-module.exports={createUser}
+const userLogin = async function (req, res) {
+
+    try {
+
+        let data = req.body
+
+        let { email, password } = data
+
+        if (!email) return res.status(400).send({ status: false, message: "EmailId required to login" })
+        if (!validator.isValidEmail(email)) { return res.status(400).send({ status: false, message: "Invalid EmailID Format or Please input all letters in lowercase." }) }
+
+    if(!password) return res.status(400).send({ status: false, message: "Password required to login" })
+        if (!validator.isValidpassword(password)) { return res.status(400).send({ status: false, message: "Invalid Password Format! Password Should be 8 to 15 Characters and have a mixture of uppercase and lowercase letters and contain one symbol and then at least one Number." }) }
+
+        const userData = await usermodel.findOne({ email: email })
+        if (!userData) { return res.status(401).send({ status: false, message: "Invalid Login Credentials! You need to register first." }) }
+
+        let checkPassword = await bcrypt.compare(password, userData.password)
+
+        if (checkPassword) {
+
+            let payload = {
+                userId: userData['_id'].toString(),
+                Batch: 'Plutonium',
+                Project: "Products Management",
+                iat: Date.now(),
+                exp: Date.now()
+            }
+
+            const token = JWT.sign({ payload }, "we-are-from-group10", { expiresIn: 60 * 60 });
+
+    
+            let obj = { userId:userData['_id'], token: token }
+
+            return res.status(200).send({ status: true, message: 'User login successfull', data: obj })
+
+        } else {
+
+            return res.status(401).send({ status: false, message: 'Wrong Password' })
+        }
+
+    } catch (error) {
+
+        return res.status(500).send({ status: false, error: error.message })
+    }
+}
+
+
 const userget = async (req,res)=>{
     try{
    const userid=req.param
    
    if(!isValidObjectId(userid)){
-    return res.status(400).send({ status: false, message:"userId is not vaild" })
+    return res.status(400).send({status: false, message:"userId is not vaild"})
   }
 
    if(userid!=req.userid){
@@ -140,4 +144,4 @@ const userget = async (req,res)=>{
     }
 }
 
-module.exports={userget,userLogin}
+module.exports={userget,userLogin,createUser}
