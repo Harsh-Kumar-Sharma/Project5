@@ -7,11 +7,9 @@ const authentication = async function (req, res, next) {
         let token = req.headers['authorization'];
 
         if (!token) return res.status(400).send({ status: false, msg: "login is required" })
-
         if (token.startsWith('Bearer')) {
             token = token.slice(7, token.length)
         }
-
          try{
         let decodedtoken = jwt.verify(token, "we-are-from-group10")
             req.userId=decodedtoken.payload.userId

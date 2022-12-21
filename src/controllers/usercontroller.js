@@ -135,9 +135,9 @@ const userget = async (req,res)=>{
     return res.status(400).send({status: false, message:"userId is not vaild"})
   }
 
-//    if(userid!=req.userid){
-//     return res.status(403).send({status:false,message:"not authoristed"})
-//    }
+   if(userid!=req.userId){
+    return res.status(400).send({status:false,message:"please provide valid userid"})
+   }
    const getuser = await usermodel.findOne({_id:userid})
    return res.status(200).send({status:true,message: "User profile details",data:getuser})
     }
