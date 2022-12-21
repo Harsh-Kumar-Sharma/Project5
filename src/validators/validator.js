@@ -25,7 +25,7 @@ const regexPassword = function (password) {
         .test(password)
 }
 
-exports.isValidAvailableSizes = (availablesizes) => {
+const isValidAvailableSizes = (availablesizes) => {
     for( i=0 ;i<availablesizes.length; i++){
       if(!["S", "XS","M","X", "L","XXL", "XL"].includes(availablesizes[i])) return false
     }
@@ -39,5 +39,6 @@ exports.isValidAvailableSizes = (availablesizes) => {
     return result
   };
 
+  const isValidCity = (value) => { return (/^[A-za-z]+$/).test(value)}
 
-module.exports={valid,validEmail,validPhone,isValidObjectId,validPincode,regexPassword}
+module.exports={valid,validEmail,validPhone,isValidObjectId,validPincode,regexPassword,isValidAvailableSizes,isValidCity}

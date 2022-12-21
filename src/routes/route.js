@@ -12,7 +12,8 @@ router.put('/user/:userId/profile',usercontroller.updateUser)
 
 /*-------------------------Products end points---------------------------------*/
 router.post('/products',productcontroller.createProduct)
-router.post('/products/:productId',productcontroller.updateproduct)
+router.put('/products/:productId',productcontroller.updateproduct)
+router.get('/products',productcontroller.getProductbyQuery)
 
 
 

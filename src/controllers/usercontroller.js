@@ -154,8 +154,9 @@ const updateUser = async function (req, res) {
       let userId = req.params.userId
       let data = req.body
       let files = req.files
-      let { fname, lname, email, phone, password,address } = data
-  
+      let { fname, lname, email, phone, password} = data
+      let address = JSON.parse(data.address);
+
       if (Object.keys(data).length==0) {
         return res.status(400).send({ status: false, message: "please provide user details" })
       }
@@ -206,10 +207,9 @@ const updateUser = async function (req, res) {
               obj.profileImage = uploadedURL
           }
           //---------------------------Validation of Address----------------------------------------//
-  
+            
           if (address) {
               let { shipping, billing } = address
-  
               if (shipping) {
                   if (shipping.street) { obj['address.shipping.street'] = shipping.street }
                   if (shipping.city) {
@@ -230,7 +230,7 @@ const updateUser = async function (req, res) {
                       obj['address.billing.city'] = billing.city
                   }
                   if (billing.pincode) {
-                      if (!validator.validPin(billing.pincode)) { return res.status(400).send({ status: false, message: 'Invalid Shipping Pin Code.' }) }
+                      if (!validator.validPincode(billing.pincode)) { return res.status(400).send({ status: false, message: 'Invalid Shipping Pin Code.' }) }
                       obj['address.billing.pincode'] = billing.pincode
                   }}}
   
