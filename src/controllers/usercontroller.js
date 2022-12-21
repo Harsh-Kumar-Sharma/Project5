@@ -155,7 +155,7 @@ const updateUser = async function (req, res) {
       let data = req.body
       let files = req.files
       let { fname, lname, email, phone, password} = data
-      let address = JSON.parse(data.address);
+      
 
       if (Object.keys(data).length==0) {
         return res.status(400).send({ status: false, message: "please provide user details" })
@@ -208,7 +208,8 @@ const updateUser = async function (req, res) {
           }
           //---------------------------Validation of Address----------------------------------------//
             
-          if (address) {
+          if (data.address) {
+            let address = JSON.parse(data.address);
               let { shipping, billing } = address
               if (shipping) {
                   if (shipping.street) { obj['address.shipping.street'] = shipping.street }

@@ -55,13 +55,14 @@ const createProduct =async (req,res)=>{
 
 
 const updateproduct = async (req,res)=>{
-    
+
     try{
 
-    const productid=req.pharms.productId
+    const productid=req.params.productId
     const body=req.body;
     let productImage = req.files
     const {title,description,price}  = body
+    const data={}
 
    /*-------------------------productid validation ---------------------------------*/
     if(!productid){
@@ -77,10 +78,16 @@ const updateproduct = async (req,res)=>{
     }
     
     /*-------------------------body validation ---------------------------------*/
+
+        if(Object.keys(body).length==0 && productImage.length==0){
+            return res.status(400).send({status:false,message:"Please provide title"})
+         }
+
       if(title){
     if(!validator.valid(title)){
         return res.status(400).send({status:false,message:"Please provide title"})
-     }}
+     } data.title=title
+    }
 
         if(description){
      if(!validator.valid(description)){
@@ -90,20 +97,52 @@ const updateproduct = async (req,res)=>{
      if(!validator.valid(price)){
         return res.status(400).send({status:false,message:"Please provide description"})
      }}
+     if (body.currencyId){
+        if (!(validator.valid(body.currencyId))) {
+            return res.status(400).send({status: false, message: "Please provide Currency Id to update"})}
+            if (body.currencyId.trim() !== "INR") {
+                return res.status(400).send({ status: false, message: "Please provide Indian Currency Id" })
+            }
+            data.currencyId = body.currencyId
+        }
 
-     const data = {
-        ...body
-     }
+        if (body.currencyFormat){
+        if (!(validator.valid(body.currencyFormat))) {
+            return res.status(400).send({status: false, message: "Please provide Currency Format to update"})}
+            if (body.currencyFormat.trim() !== "₹") {
+                return res.status(400).send({ status: false, message: "Please provide right format for currency" })
+            }
+            data.currencyFormat = body.currencyFormat
+        }
+         
+        if (body.availableSizes){
+            if (!(validator.valid(body.availableSizes))) {
+                return res.status(400).send({status: false, message: "Please provide available size to update"})}
+    
+                if (!(validator.isValidAvailableSizes(body.availableSizes))) {
+                    return res.status(400).send({ status: false, message: "Please provide a valid size" })
+                }
+                
+                data.availableSizes = body.availableSizes
+    
+            }
+    
+            if (body.installments != null){
+            if (!(validator.valid(body.installments))) {
+                return res.status(400).send({ status: false, message: "Please provide installment to update" })
+                }
+                data.installments = body.installments
+            }
 
-
-     if(productImage){
+     if(productImage.length > 0){
         const uploadedFileURL = await aws.uploadFile(productImage[0])
         data.productImage=uploadedFileURL;
      }
-       updateproduct = await productModel.updateOne({id:productid},data,{new:true})
+     const   updateproduct = await productModel.findOneAndUpdate({_id:productid},data,{new:true})
+     return res.status(200).send({status:true,data:updateproduct})
     }
     catch(err){
-        return res.status(5000).send({status:false,message:err.message})
+        return res.status(500).send({status:false,message:err.message})
     }
 
 }
@@ -111,9 +150,10 @@ const updateproduct = async (req,res)=>{
 //-----------------------------Get Product By Id --------------------------------//
 
  const getProductById = async function (req, res) {
-    try {
+
+   try {
         let productId = req.params.productId
-        if (!valid.isValidObjectId(productId)) {
+        if (!validator.validObjectId(productId)) {
             return res.status(400).send({ status: false, message: "please enter valid productId" })
         }
         let product = await productModel.findOne({ _id: productId, isDeleted: false })
@@ -134,7 +174,7 @@ const deleteProduct = async function (req, res) {
     try {
         let productId = req.params.productId
 
-        if (!validator.isValidObjectId(productId)) {
+        if (!validator.validObjectId(productId)) {
             return res.status(400).send({ status: false, message: "please enter valid productId" })
         }
 
@@ -165,7 +205,7 @@ const getProductbyQuery = async function (req, res) {
         let filters = { isDeleted: false }
 
         if (size != null) {
-            if (!validator.isValidAvailableSizes(size)) {
+            if (!validator.validAvailableSizes(size)) {
                 return res.status(400).send({ status: false, msg: 'No Such Size Exist in our Filters ... Select from ["S", "XS", "M", "X", "L", "XXL", "XL"]' })
             }
             filters["availableSizes"] = size
