@@ -13,6 +13,9 @@ const createProduct =async (req,res)=>{
    const {title,description,price,availableSizes}  = data
 
    /*------------------------- validation ---------------------------------*/
+   if(Object.keys(body).length==0 && productImage.length==0){
+    return res.status(400).send({status:false,message:"Please provide body"})
+ }
      if(!validator.valid(title)){
         return res.status(400).send({status:false,message:"Please provide title"})
      }
@@ -80,7 +83,7 @@ const updateproduct = async (req,res)=>{
     /*-------------------------body validation ---------------------------------*/
 
         if(Object.keys(body).length==0 && productImage.length==0){
-            return res.status(400).send({status:false,message:"Please provide title"})
+            return res.status(400).send({status:false,message:"Please provide body"})
          }
 
       if(title){
