@@ -92,11 +92,13 @@ const updateproduct = async (req,res)=>{
         if(description){
      if(!validator.valid(description)){
         return res.status(400).send({status:false,message:"Please provide description"})
-     }}
+     } data.description=description
+    }
         if(price){
      if(!validator.valid(price)){
         return res.status(400).send({status:false,message:"Please provide description"})
-     }}
+     }data.price=price
+    }
      if (body.currencyId){
         if (!(validator.valid(body.currencyId))) {
             return res.status(400).send({status: false, message: "Please provide Currency Id to update"})}
