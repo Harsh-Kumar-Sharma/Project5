@@ -155,7 +155,7 @@ const updateproduct = async (req,res)=>{
 
    try {
         let productId = req.params.productId
-        if (!validator.validObjectId(productId)) {
+        if (!validator.isValidObjectId(productId)) {
             return res.status(400).send({ status: false, message: "please enter valid productId" })
         }
         let product = await productModel.findOne({ _id: productId, isDeleted: false })
@@ -176,7 +176,7 @@ const deleteProduct = async function (req, res) {
     try {
         let productId = req.params.productId
 
-        if (!validator.validObjectId(productId)) {
+        if (!validator.isValidObjectId(productId)) {
             return res.status(400).send({ status: false, message: "please enter valid productId" })
         }
 
@@ -207,7 +207,7 @@ const getProductbyQuery = async function (req, res) {
         let filters = { isDeleted: false }
 
         if (size != null) {
-            if (!validator.validAvailableSizes(size)) {
+            if (!validator.isValidAvailableSizes(size)) {
                 return res.status(400).send({ status: false, msg: 'No Such Size Exist in our Filters ... Select from ["S", "XS", "M", "X", "L", "XXL", "XL"]' })
             }
             filters["availableSizes"] = size
