@@ -138,5 +138,26 @@ const updateCart = async function (req, res) {
         res.status(500).send({ status: false, msg: error.msg })
     }
 }
+const deleteCart = async (req, res) => {
 
-module.exports={cartcreate,updateCart}
+    try {
+
+        let userId = req.params.userId;
+
+        if (!validator.isValidObjectId(productId)) {
+            return res.status(400).send({ status: false, message: "please enter valid productId" })
+        }
+        
+        let cartDelete = await cartModel.findOneAndUpdate({ userId: userId }, { $set: { items: [], totalPrice: 0, totalItems: 0 } }, { new: true })
+        if (!cartDelete) return res.status(404).send({ status: false, message: "cart does not exist OR already deleted!" })
+
+        
+        return res.status(204).send({status:true,message:"data deleted successfully"})
+
+    } catch (error) {
+
+        return res.status(500).send({ status: false, error: error.message })
+    }
+}
+
+module.exports={cartcreate,updateCart,deleteCart}
