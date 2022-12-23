@@ -13,7 +13,7 @@ const createProduct =async (req,res)=>{
    const {title,description,price,availableSizes}  = data
 
    /*------------------------- validation ---------------------------------*/
-   if(Object.keys(body).length==0 && productImage.length==0){
+   if(Object.keys(data).length==0 && productImage.length==0){
     return res.status(400).send({status:false,message:"Please provide body"})
  }
      if(!validator.valid(title)){
