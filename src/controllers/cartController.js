@@ -138,6 +138,24 @@ const updateCart = async function (req, res) {
         res.status(500).send({ status: false, msg: error.msg })
     }
 }
+
+
+const getCart = async (req, res) => {
+
+    try {
+
+        let userId = req.params.userId;
+
+        let carts = await cartModel.findOne({ userId: userId }).populate('items.productId')
+        if (!carts) return res.status(404).send({ status: false, message: "cart does not exist!" })
+        return res.status(200).send({ status: true, message: 'Success', data: carts })
+
+    } catch (error) {
+
+        return res.status(500).send({ status: false, error: error.message })
+    }
+}
+
 const deleteCart = async (req, res) => {
 
     try {
@@ -160,20 +178,5 @@ const deleteCart = async (req, res) => {
     }
 }
 
-const getCart = async (req, res) => {
-
-    try {
-
-        let userId = req.params.userId;
-
-        let carts = await cartModel.findOne({ userId: userId }).populate('items.productId')
-        if (!carts) return res.status(404).send({ status: false, message: "cart does not exist!" })
-        return res.status(200).send({ status: true, message: 'Success', data: carts })
-
-    } catch (error) {
-
-        return res.status(500).send({ status: false, error: error.message })
-    }
-}
 
 module.exports={cartcreate,updateCart,deleteCart,getCart}

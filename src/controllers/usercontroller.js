@@ -102,7 +102,6 @@ const userLogin = async function (req, res) {
 
             let payload = {
                 userId: userData['_id'].toString(),
-                Batch: 'Plutonium',
                 Project: "Products Management",
                 iat: Date.now(),
                 exp: Date.now()

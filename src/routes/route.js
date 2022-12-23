@@ -19,5 +19,11 @@ router.get('/products/:productId',productcontroller.getProductById)
 
 /*-------------------------cart end points---------------------------------*/
 router.post('/users/:userId/cart' , cartcontroller.cartcreate)
+router.put('/users/:userId/cart',cartcontroller.updateCart)
+router.get('/users/:userId/cart',cartcontroller.getCart )
+router.delete('/users/:userId/cart',cartcontroller.deleteCart)
+
+
 
 module.exports=router;
+
