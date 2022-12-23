@@ -19,7 +19,7 @@ router.put('/products/:productId',productcontroller.updateproduct)
 router.delete('/products/:productId',productcontroller.deleteProduct)
 
 /*-------------------------cart end points---------------------------------*/
-router.post('/users/:userId/cart' , cartcontroller.cartcreate)
+router.post('/users/:userId/cart' , cartcontroller.cartCreate)
 router.put('/users/:userId/cart',cartcontroller.updateCart)
 router.get('/users/:userId/cart',cartcontroller.getCart )
 router.delete('/users/:userId/cart',cartcontroller.deleteCart)
