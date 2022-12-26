@@ -70,11 +70,8 @@ const cartCreate = async (req, res) => {
                 array[i].quantity = array[i].quantity + 1
                 const updateCart = await cartModel.findOneAndUpdate(
                     { userId: userId },
-                    {
-
-                        items: array,
+                     { items: array,
                         totalPrice: checkCartPresent.totalPrice + CheckProduct.price
-
                     }, { new: true }
                 )
                 return res.status(201).send({ status: true, message: "Success", data: updateCart })

@@ -37,6 +37,7 @@ const createUser = async function ( req,res){
     if (data.address == null) { return res.status(400).send({ status: false, message: "Please provide your address"})}
 
     let address = JSON.parse(data.address)
+    console.log(typeof address)
 
     if (!(validator.valid(address.shipping.street))) { return res.status(400).send({ status: true, message: " Street address is required" }) }
 
@@ -53,15 +54,15 @@ const createUser = async function ( req,res){
     if (!(validator.valid(address.billing.pincode))) { return res.status(400).send({ status: true, message: " Billing pincode is required" }) }
 
     if(!(validator.validPincode(address.billing.pincode))) { return res.status(400).send({ status: false, message: "Please provide pincode in 6 digit number"})}
-
+    
     //encrypting password
     const saltRounds = 10;
-    hash = await bcrypt.hash(data.password, saltRounds);
+    hash = await bcrypt.hash(data.password, saltRounds);  
 
-    const uploadedFileURL = await aws.uploadFile(files[0])
+    const uploadedFileURL = await aws.uploadFile(files[0])   
 
     data.profileImage = uploadedFileURL;
-
+    
     data.password = hash;
 
     data.address = address;
@@ -134,7 +135,7 @@ const userget = async (req,res)=>{
     return res.status(400).send({status: false, message:"userId is not vaild"})
   }
 
-   if(userid!=req.userId){
+   if(userid!=req.userId){ 
     return res.status(400).send({status:false,message:"please provide valid userid"})
    }
    const getuser = await usermodel.findOne({_id:userid})
@@ -205,6 +206,7 @@ const updateUser = async function (req, res) {
               let uploadedURL = await aws.uploadFile(files[0])
               obj.profileImage = uploadedURL
           }
+          
           //---------------------------Validation of Address----------------------------------------//
             
           if (data.address) {

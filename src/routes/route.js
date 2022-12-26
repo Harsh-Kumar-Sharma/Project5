@@ -3,6 +3,7 @@ const router=express.Router();
 const usercontroller =require('../controllers/usercontroller');
 const productcontroller =require('../controllers/productController')
 const cartcontroller = require('../controllers/cartController')
+const orderController = require('../controllers/orderController')
 const auth = require('../middleware/auth')
 
 /*-------------------------user end points ---------------------------------*/

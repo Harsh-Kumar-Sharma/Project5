@@ -6,7 +6,7 @@ const authentication = async function (req, res, next) {
     try {
         let token = req.headers['authorization'];
 
-        if (!token) return res.status(400).send({ status: false, msg: "login is required" })
+        if (!token) return res.status(400).send({ status: false, msg: "token is required" })
         if (token.startsWith('Bearer')) {
             token = token.slice(7, token.length)
         }
@@ -18,7 +18,6 @@ const authentication = async function (req, res, next) {
          return res.status(401).send({ status: false, msg: "token is invalid" })
          }
 
-
         next()
     }
     catch (error) {
@@ -28,7 +27,7 @@ const authentication = async function (req, res, next) {
 }
 
 
-const authorisation = async function (req, res, next) {
+const authorisation = async function (req, res, next) {        
     try {
         const userid=req.pharms.userId
          if(req.userId==userid)

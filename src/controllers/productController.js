@@ -27,7 +27,7 @@ const createProduct =async (req,res)=>{
         return res.status(400).send({status:false,message:"Please provide description"})
      }
      if(!validator.valid(price)){
-        return res.status(400).send({status:false,message:"Please provide description"})
+        return res.status(400).send({status:false,message:"Please provide price"})
      }
 
      if(!["S", "XS","M","X", "L","XXL", "XL"].includes(availableSizes)){
@@ -60,7 +60,6 @@ const createProduct =async (req,res)=>{
  
          let { size, name, priceGreaterThan, priceLessThan, priceSort } = req.query
            
- 
          let filters = { isDeleted: false }
  
          if (size != null) {
@@ -69,8 +68,6 @@ const createProduct =async (req,res)=>{
              }
              filters["availableSizes"] = size
          }
- 
-     
  
          if (name != null) {
              if (!validator.valid(name)) return res.status(400).send({ status: false, message: "Please enter Product name" })
@@ -93,7 +90,7 @@ const createProduct =async (req,res)=>{
  
          if (priceSort != null) {
              if (priceSort == 1) {
-                 const products = await productModel.find(filters).sort({ price: 1 })
+                 const products = await productModel.find(filters).sort({ priceSort })
                  if (products.length == 0) {
                      return res.status(404).send({ status: false, message: "No data found that matches your search" })
                  }
@@ -101,7 +98,7 @@ const createProduct =async (req,res)=>{
              }
  
              if (priceSort == -1) {
-                 const products = await productModel.find(filters).sort({ price: -1 })
+                 const products = await productModel.find(filters).sort({ priceSort })
                  if (products.length == 0) {
                      return res.status(404).send({ status: false, message: "No data found that matches your search" })
                  }
