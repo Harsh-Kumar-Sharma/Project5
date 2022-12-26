@@ -25,6 +25,9 @@ router.put('/users/:userId/cart',cartcontroller.updateCart)
 router.get('/users/:userId/cart',cartcontroller.getCart )
 router.delete('/users/:userId/cart',cartcontroller.deleteCart)
 
+/*-------------------------cart end points---------------------------------*/
+router.post('/users/:userId/orders' , orderController.createOrder)
+router.put('/users/:userId/orders' , orderController.updateorder)
 
 
 module.exports=router;
