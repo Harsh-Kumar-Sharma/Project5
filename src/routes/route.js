@@ -10,7 +10,7 @@ const auth = require('../middleware/auth')
 router.post('/register',usercontroller.createUser)
 router.post('/login',usercontroller.userLogin)
 router.get('/user/:userId/profile',auth.authentication ,usercontroller.userget)
-router.put('/user/:userId/profile',usercontroller.updateUser)
+router.put('/user/:userId/profile',auth.authentication,auth.authorisation,usercontroller.updateUser)
 
 /*-------------------------Products end points---------------------------------*/
 router.post('/products',productcontroller.createProduct)
@@ -29,6 +29,8 @@ router.delete('/users/:userId/cart',cartcontroller.deleteCart)
 router.post('/users/:userId/orders' , orderController.createOrder)
 router.put('/users/:userId/orders' , orderController.updateorder)
 
-
+router.all("/**",  (req, res) => {
+    return res.status(404).send({ status: false, msg: "Requested path does not exist, Check your URL"})
+});
 module.exports=router;
 

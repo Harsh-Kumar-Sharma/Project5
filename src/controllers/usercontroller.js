@@ -3,7 +3,7 @@ const jwt=require('jsonwebtoken')
 const bcrypt = require("bcrypt")
 const validator = require('../validators/validator')
 const aws =require('./aws')
-
+const { isValidObjectId } = require('mongoose')
 //__________________________________________________________________________________________________________________________
                                                    //| createUser |
 //__________________________________________________________________________________________________________________________ 
@@ -12,11 +12,12 @@ const createUser = async function ( req,res){
         let data = req.body
         if (Object.keys(data)==0){ return res.status(400).send({status : false, message : "body can't be empty"})}
         let files = req.files
+       // const{profileImage}= files
         if(files.length ==0) {return res.status(400).send({status : false, message : "file can't be empty"})}
-
-    if (!(validator.valid(data.fname))) { return res.status(400).send({ status: false, message: "First Name is required" }) }
-
-    if (!(validator.valid(data.lname))) { return res.status(400).send({ status: false, message: "Last Name is required" }) }
+    if (!(data.fname)) { return res.status(400).send({ status: false, message: "First Name is required" }) }
+    if (!(validator.validNaming(data.fname))) { return res.status(400).send({ status: false, message: "First Name should be in alphabet " }) }
+    if (!(data.lname)) { return res.status(400).send({ status: false, message: "Last Name is required" }) }
+    if (!(validator.validNaming(data.lname))) { return res.status(400).send({ status: false, message: "Last Name should be in alphabet" }) }
 
     if (!(validator.valid(data.email))) { return res.status(400).send({ status: false, message: "Email is required" }) }
 
@@ -24,15 +25,16 @@ const createUser = async function ( req,res){
 
     let isUniqueEMAIL = await usermodel.findOne({ email: data.email })
     if (isUniqueEMAIL) { return res.status(400).send({ status: false, message: `User already exist with this ${data.email}. Login instead ?` }) }
-
+   if(files && files.length > 0){
+   if(!(validator.validImageUrl(files[0].originalname))) { return res.status(400).send({ status: false, message: "Please provide valid Image file"})}}
     if (!(validator.valid(data.phone))) { return res.status(400).send({ status: false, message: "Phone number is required" }) }
 
     if (!(validator.validPhone(data.phone))) { return res.status(400).send({ status: false, message: "Please provide a valid Indian phone number with country code (+91..)" }) }
 
     let isUniquePhone = await usermodel.findOne({ phone: data.phone })
     if (isUniquePhone) { return res.status(400).send({ status: false, message: `User already exist with this ${data.phone}.` }) }
-
-    if (!(validator.valid(data.password))) { return res.status(400).send({ status: false, message: "Password is required" }) }
+    if(!data.password) { return res.status(400).send({ status: false, message: "Password is required" }) }
+    if (!(validator.regexPassword(data.password))) { return res.status(400).send({ status: false, message: "Please provide valid password" }) }
 
     if (data.password.trim().length < 8 || data.password.trim().length > 15) { return res.status(400).send({ status: false, message: 'Password should be of minimum 8 characters & maximum 15 characters' }) }
 
@@ -93,13 +95,13 @@ const userLogin = async function (req, res) {
         let { email, password } = data
 
         if (!email) return res.status(400).send({ status: false, message: "EmailId required to login" })
-        if (!validator.validEmail(email)) { return res.status(400).send({ status: false, message: "Invalid EmailID Format or Please input all letters in lowercase." }) }
+        if (!validator.validEmail(email)) { return res.status(400).send({ status: false, message: "Login Failure due to invalid email ID." }) }
 
     if(!password) return res.status(400).send({ status: false, message: "Password required to login" })
         if (!validator.regexPassword(password)) { return res.status(400).send({ status: false, message: "Invalid Password Format! Password Should be 8 to 15 Characters and have a mixture of uppercase and lowercase letters and contain one symbol and then at least one Number." }) }
 
         const userData = await usermodel.findOne({ email: email })
-        if (!userData) { return res.status(401).send({ status: false, message: "Invalid Login Credentials! You need to register first." }) }
+        if (!userData) { return res.status(400).send({ status: false, message: "Login Failure due to Unmatched Email" }) }
 
         let checkPassword = await bcrypt.compare(password, userData.password)
 
@@ -136,7 +138,7 @@ const userLogin = async function (req, res) {
 const userget = async (req,res)=>{
     try{
    const userid=req.params.userId
-
+   //if(!userid ==isValidObjectId)  {return res.status(400).send({status :false, message : "User Id is required"})}
    if(!validator.isValidObjectId(userid)){
     return res.status(400).send({status: false, message:"userId is not vaild"})
   }
@@ -159,17 +161,18 @@ const userget = async (req,res)=>{
 
 const updateUser = async function (req, res) {
     try {
-      let userId = req.params.userId
+      
       let data = req.body
+      let userId = req.params.userId
       let files = req.files
       let { fname, lname, email, phone, password} = data
       
 
       if (Object.keys(data).length==0) {
-        return res.status(400).send({ status: false, message: "please provide user details" })
+        return res.status(400).send({ status: false, message: "please provide some data in body" })
       }
       //--------------------checking User -----------------------//
-  
+       if(!isValidObjectId(userId)){ return res.status(400).send({status : false, message : " Please Provide User id"})}
       if (!validator.isValidObjectId(userId)) {
         return res.status(400).send({ status: false, message: "User id is not valid" })
       }
@@ -181,13 +184,15 @@ const updateUser = async function (req, res) {
           //---------------------------Validation of fname----------------------------------------//
   
           if (fname) {
-              if (!validator.valid(fname)) { return res.status(400).send({ status: false, message: 'please provide valid firstname' }) }
+
+
+              if (!validator.validNaming(fname)) { return res.status(400).send({ status: false, message: 'please provide valid firstname' }) }
               obj.fname = fname
           }
           //---------------------------Validation of lname----------------------------------------//
   
           if (lname) {
-              if (!validator.valid(lname)) { return res.status(400).send({ status: false, message: 'please provide valid lastname' }) }
+              if (!validator.validNaming(lname)) { return res.status(400).send({ status: false, message: 'please provide valid lastname' }) }
               obj.lname = lname
           }
           //---------------------------Validation of Email----------------------------------------//
@@ -255,4 +260,6 @@ const updateUser = async function (req, res) {
           return res.status(500).send({ status: false, message: error.message})
   }
   }
+  
+
 module.exports={userget,userLogin,createUser,updateUser}

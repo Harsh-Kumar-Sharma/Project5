@@ -25,21 +25,39 @@ const authentication = async function (req, res, next) {
         return res.status(500).send({ msg: error.message })
     }
 }
-
-
-const authorisation = async function (req, res, next) {        
+const authorisation = async function (req, res, next) {
     try {
-        const userid=req.pharms.userId
-         if(req.userId==userid)
+        let token = req.headers['authorization'];
+        
+        if (token.startsWith('Bearer')) {
+            token = token.slice(7, token.length)
+        }
+
+        let decodedtoken = jwt.verify(token, "we-are-from-group10", 
+        )
+
+
+        let toBeupdateduserId = req.params.userId
+        
+        if (!(validator.isValidObjectId(toBeupdateduserId))) {return res.status(400).send({status: false, message: 'Enter the UserID & it should be valid'})}
+        
+
+        let updatinguserId = await userModel.find({ _id: toBeupdateduserId }).select({ _id: 1 })
+        
+
+
+        //let id = decodedtoken.userId
+        //if (id != userId) return res.status(403).send({ status: false, msg: "You are not authorised to perform this task" })
+
+
         next();
-        else
-        return res.status(403).send({ status:false, message:"not authorise"})
     }
     catch (error) {
         console.log(error)
-        return res.status(500).send({ status:false, message: error.message })
+        return res.status(500).send({ msg: error.message })
     }
 }
+
 
 
 

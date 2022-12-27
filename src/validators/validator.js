@@ -6,7 +6,13 @@ if(typeof(input)==="string" && input.trim().length>0){ return true}
 if(typeof(input)==="number" && input.toString().trim().length>0){ return true}
 if(typeof(input)==="object" && input.length>0) {return true}
 }
-
+const validNaming = function (input){
+    return /^[a-z ,.'-]+$/i.test(input);
+}
+const validImageUrl = (img) => {
+    const reg = /.+\.(?:(jpg|gif|png|jpeg|jfif))/;
+    return reg.test(img);
+  }
 const validEmail = function (email){
     return /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email);
 }
@@ -41,4 +47,4 @@ const isValidAvailableSizes = (availablesizes) => {
 
   const isValidCity = (value) => { return (/^[A-za-z]+$/).test(value)}
 
-module.exports={valid,validEmail,validPhone,isValidObjectId,validPincode,regexPassword,isValidAvailableSizes,isValidCity}
+module.exports={valid,validEmail,validPhone,isValidObjectId,validPincode,regexPassword,isValidAvailableSizes,isValidCity,validNaming,validImageUrl}
