@@ -25,6 +25,8 @@ const createOrder = async (req,res)=>{
         return res.status(400).send({status: false, message:"body is required"})
         }
           const {cancellable,cartId} = body
+  
+
     if(!validator.isValidObjectId(cartId)){
         return res.status(400).send({status: false, message:"cartId is not vaild"})
       }
@@ -47,7 +49,6 @@ const createOrder = async (req,res)=>{
                 if(["true","false"].includes(cancellable)){
                     return res.status(400).send({status: false, message:"please enter valid cancellable type boolean"})
                     }   data.cancellable=cancellable
-            
             const finalorder = await orderModel.create(data)
            return res.status(201).send({status:true,data:finalorder})
 
@@ -64,10 +65,6 @@ const updateorder = async (req,res)=>{
       if(!validator.isValidObjectId(userId)){
         return res.status(400).send({status: false, message:"userId is not vaild"})
       }
-    
-    //    if(userId!=req.userId){
-    //     return res.status(400).send({status:false,message:"please provide valid userid"})
-    //    }
        const getuser = await usermodel.findOne({_id:userId,isDeleted:false})
        if(!getuser){
        return res.status(400).send({status: false, message:"userId is not register"})
@@ -76,7 +73,7 @@ const updateorder = async (req,res)=>{
        if(Object.keys(body).length===0){
         return res.status(400).send({status: false, message:"body is required"})
         }
-          const {orderId} = body
+          const {orderId,status} = body
           if(!validator.isValidObjectId(orderId)){
             return res.status(400).send({status: false, message:"userId is not vaild"})
           }
@@ -84,12 +81,24 @@ const updateorder = async (req,res)=>{
           if(!order){
             return res.status(400).send({status: false, message:"orderid is not register"})
             }
-          if(order.cancellable==true){
-           var  status="cancelled"
+            
+            if(status=="cancelled"){
+               if(!order.cancellable){
+                return res.status(400).send({status:false,message:"you are not cancelled this order"})
+              }
+              if(order.status=="cancelled"){
+                return res.status(400).send({status:false,message:"order is allredy cancelled"})
+              }
             }
-            if(order.cancellable==false){
-                status="completed"
-               }
+            if(order.status=="cancelled" && status=="completed"){
+              return res.status(400).send({status:false,message:"order is allredy cancelled"})
+            }
+          
+            if(!["pending", "completed", "cancelled"].includes(status)){
+              return res.status(400).send({status:false,message:"please provide valid status"})
+            }
+            
+            
              const updatesorder = await orderModel.findOneAndUpdate({_id:orderId,isDeleted:false},{$set:{status:status}},{new:true})
              res.status(200).send({status:true,data:updatesorder})  
             }catch (err){

@@ -151,7 +151,7 @@ const updateCart = async function (req, res) {
                         const updateItems = cart.totalItems - 1
                         const productPrice = product.price * cart.items[i].quantity
                         const updatePrice = cart.totalPrice - productPrice
-                         cart.items.splice(i, 1)
+                         cart.items.splice(i,1)
                         
                         const updateItemsAndPrice = await cartModel.findOneAndUpdate({ userId: userId }, { items: cart.items, totalPrice: updatePrice, totalItems: updateItems },{new:true})
                         return res.status(200).send({ status: true, msg: "Product has been removed successfully from the cart", data: updateItemsAndPrice })
