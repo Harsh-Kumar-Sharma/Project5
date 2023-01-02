@@ -14,9 +14,9 @@ const createOrder = async (req,res)=>{
         return res.status(400).send({status: false, message:"userId is not vaild"})
       }
     
-    //    if(userId!=req.userId){
-    //     return res.status(400).send({status:false,message:"please provide valid userid"})
-    //    }
+       if(userId!=req.userId){
+        return res.status(400).send({status:false,message:"please provide valid userid"})
+       }
        const getuser = await usermodel.findOne({_id:userId,isDeleted:false})
        if(!getuser){
        return res.status(400).send({status: false, message:"userId is not register"})

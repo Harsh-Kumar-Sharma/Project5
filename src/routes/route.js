@@ -20,14 +20,14 @@ router.put('/products/:productId',productcontroller.updateproduct)
 router.delete('/products/:productId',productcontroller.deleteProduct)
 
 /*-------------------------cart end points---------------------------------*/
-router.post('/users/:userId/cart' , cartcontroller.cartCreate)
-router.put('/users/:userId/cart',cartcontroller.updateCart)
-router.get('/users/:userId/cart',cartcontroller.getCart )
-router.delete('/users/:userId/cart',cartcontroller.deleteCart)
+router.post('/users/:userId/cart' ,auth.authentication,auth.authorisation, cartcontroller.cartCreate)
+router.put('/users/:userId/cart',auth.authentication,auth.authorisation,cartcontroller.updateCart)
+router.get('/users/:userId/cart',auth.authentication,auth.authorisation,cartcontroller.getCart )
+router.delete('/users/:userId/cart',auth.authentication,auth.authorisation,cartcontroller.deleteCart)
 
 /*-------------------------cart end points---------------------------------*/
-router.post('/users/:userId/orders' , orderController.createOrder)
-router.put('/users/:userId/orders' , orderController.updateorder)
+router.post('/users/:userId/orders' ,auth.authentication,auth.authorisation, orderController.createOrder)
+router.put('/users/:userId/orders' , auth.authentication,auth.authorisation,orderController.updateorder)
 
 router.all("/**",  (req, res) => {
     return res.status(404).send({ status: false, msg: "Requested path does not exist, Check your URL"})
