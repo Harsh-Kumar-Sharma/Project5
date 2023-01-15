@@ -209,40 +209,19 @@ const createUser = async function (req, res) {
 const userLogin = async function (req, res) {
   try {
     const { email, password } = req.body;
-    if (!email) {
-      return res
-        .status(400)
-        .send({ status: false, message: "email is required" });
+    if (!email) {return res.status(400).send({ status: false, message: "email is required" });
     }
-    if (!validator.validEmail(email)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "email is not valid" });
-    }
-    if (!password)
-      return res
-        .status(400)
-        .send({ status: false, message: "Password required to login" });
-    if (!validator.regexPassword(password)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message:
-            "Invalid Password Format! Password Should be 8 to 15 Characters and have a mixture of uppercase and lowercase letters and contain one symbol and then at least one Number.",
+    if (!validator.validEmail(email)) return res.status(400) .send({ status: false, message: "email is not valid" });
+    
+    if (!password)return res.status(400).send({ status: false, message: "Password required to login" });
+    if (!validator.regexPassword(password)) {return res .status(400) .send({status: false,message:
+   "Invalid Password Format! Password Should be 8 to 15 Characters and have a mixture of uppercase and lowercase letters and contain one symbol and then at least one Number.",
         });
     }
 
     const userData = await usermodel.findOne({ email: email });
-    if (!userData) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "Login Failure due to Unmatched Email",
-        });
-    }
-
+    if (!userData) return res.status(400).send({ status: false, message: "Login Failure due to Unmatched Email",});
+    
     let checkPassword = await bcrypt.compare(password, userData.password);
 
     if (checkPassword) {
@@ -253,9 +232,8 @@ const userLogin = async function (req, res) {
         exp: Date.now(),
       };
 
-      const token = jwt.sign({ payload }, "we-are-from-group10", {
-        expiresIn: 60 * 60,
-      });
+      const token = jwt.sign({payload }, "we-are-from-group10", { expiresIn: "60 min" },
+  );
 
       let obj = { userId: userData["_id"], token: token };
 

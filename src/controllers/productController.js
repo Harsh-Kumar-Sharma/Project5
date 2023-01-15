@@ -20,7 +20,7 @@ const createProduct =async (req,res)=>{
      if(!validator.valid(title)){
         return res.status(400).send({status:false,message:"Please provide title"})
      }
-     const checktitle= await productModel.findOne({title:title})
+     const checktitle = await productModel.findOne({title:title})
      if(checktitle){
         return res.status(400).send({status:false,message:"Please provide unquie title"})
      }
@@ -217,7 +217,6 @@ const updateproduct = async (req,res)=>{
                 }
                 
                 data.availableSizes = body.availableSizes
-    
             }
     
             if (body.installments != null){

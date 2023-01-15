@@ -12,7 +12,7 @@ router.post('/login',usercontroller.userLogin)
 router.get('/user/:userId/profile',auth.authentication ,usercontroller.userget)
 router.put('/user/:userId/profile',auth.authentication,auth.authorisation,usercontroller.updateUser)
 
-/*-------------------------Products end points---------------------------------*/
+/*-------------------------Products end points---------------------------------*/ 
 router.post('/products',productcontroller.createProduct)
 router.get('/products',productcontroller.getProductByQuery)
 router.get('/products/:productId',productcontroller.getProductById)
@@ -34,3 +34,4 @@ router.all("/**",  (req, res) => {
 });
 module.exports=router;
 
+// 7api contains authentication and authorisation nad 1 api only authentication

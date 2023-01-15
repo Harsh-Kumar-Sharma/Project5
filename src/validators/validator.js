@@ -6,6 +6,7 @@ if(typeof(input)==="string" && input.trim().length>0){ return true}
 if(typeof(input)==="number" && input.toString().trim().length>0){ return true}
 if(typeof(input)==="object" && input.length>0) {return true}
 }
+
 const validNaming = function (input){
     return /^[a-z ,.'-]+$/i.test(input);
 }

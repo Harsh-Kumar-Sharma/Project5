@@ -12,9 +12,9 @@ const cartCreate = async (req, res) => {
             return res.status(400).send({status: false, message:"userId is not vaild"})
           }
         
-        //    if(userId!=req.userId){
-        //     return res.status(400).send({status:false,message:"please provide valid userid"})
-        //    }
+           if(userId!=req.userId){
+            return res.status(400).send({status:false,message:"please provide valid userid"})
+           }
            const getuser = await usermodel.findOne({_id:userId,isDeleted:false})
            if(!getuser){
            return res.status(400).send({status: false, message:"userId is not register"})
@@ -65,8 +65,8 @@ const cartCreate = async (req, res) => {
             }
         }
         let array = checkCartPresent.items
-        for (let i = 0; i < array.length; i++) {
-            if (array[i].productId == productId) {
+        for (let i = 0; i < array.length; i++) {    
+            if (array[i].productId == productId) {          //jo bhi productId aa rhi index m uski quantity increase kr rhe h
                 array[i].quantity = array[i].quantity + 1
                 const updateCart = await cartModel.findOneAndUpdate(
                     { userId: userId },
@@ -170,7 +170,6 @@ const updateCart = async function (req, res) {
         res.status(500).send({ status: false, msg: error.msg })
     }
 }
-
 
 const getCart = async (req, res) => {
 
